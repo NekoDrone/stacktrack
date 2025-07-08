@@ -1,7 +1,7 @@
-import { exampleSchema } from "@/db/schema/example";
+import { projectsTable } from "@/db/schema/projects";
 
 export const schema = {
-  exampleSchema,
+    projectsTable,
 };
 
-export * from "@/db/schema/example";
+export * from "@/db/schema/projects";
