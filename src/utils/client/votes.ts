@@ -15,9 +15,11 @@ export const submitUpvote = async (entryId: number) => {
     if (res.ok) {
         return { success: true, error: null };
     } else {
-        return { success: false, error: res.body };
+        return { success: false, error: (await res.json()) as unknown };
     }
 };
+
+export const removeDownvote = submitUpvote;
 
 export const submitDownvote = async (entryId: number) => {
     const body: VotePostOpts = {
@@ -33,6 +35,8 @@ export const submitDownvote = async (entryId: number) => {
     if (res.ok) {
         return { success: true, error: null };
     } else {
-        return { success: false, error: res.body };
+        return { success: false, error: (await res.json()) as unknown };
     }
 };
+
+export const removeUpvote = submitDownvote;

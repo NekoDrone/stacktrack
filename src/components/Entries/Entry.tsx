@@ -3,6 +3,13 @@ import { LucideStar } from "@/components/Icons/LucideStar";
 import { LucideArrowBigDown } from "@/components/Icons/LucideArrowBigDown";
 import { LucideArrowBigUp } from "@/components/Icons/LucideArrowBigUp";
 import { useLocalStorage } from "@uidotdev/usehooks";
+import {
+    removeDownvote,
+    removeUpvote,
+    submitDownvote,
+    submitUpvote,
+} from "@/utils/client/votes";
+import { useMutation } from "@tanstack/react-query";
 
 interface EntryProps {
     entry: ProjectSelect;
@@ -20,22 +27,96 @@ export const Entry = ({ entry }: EntryProps) => {
     );
 
     const handleUpvote = () => {
+        if (isDownvoted) {
+            // change downvote to upvote
+            removeDownvote(entry.id)
+                .then(({ success, error }) => {
+                    if (success) {
+                        setIsDownvoted(false);
+                    }
+                    if (error) {
+                        console.log(error);
+                    }
+                })
+                .catch((e: unknown) => {
+                    console.log(e);
+                });
+        }
         if (isUpvoted) {
             // remove upvote
-        } else if (isDownvoted) {
-            // change downvote to upvote
+            removeUpvote(entry.id)
+                .then(({ success, error }) => {
+                    if (success) {
+                        setIsUpvoted(false);
+                    }
+                    if (error) {
+                        console.log(error);
+                    }
+                })
+                .catch((e: unknown) => {
+                    console.log(e);
+                });
         } else {
             // do normal upvote
+            submitUpvote(entry.id)
+                .then(({ success, error }) => {
+                    if (success) {
+                        setIsUpvoted(true);
+                    }
+                    if (error) {
+                        console.log(error);
+                    }
+                })
+                .catch((e: unknown) => {
+                    console.log(e);
+                });
         }
     };
 
     const handleDownvote = () => {
+        if (isUpvoted) {
+            // change upvote to downvote
+            removeUpvote(entry.id)
+                .then(({ success, error }) => {
+                    if (success) {
+                        setIsUpvoted(false);
+                    }
+                    if (error) {
+                        console.log(error);
+                    }
+                })
+                .catch((e: unknown) => {
+                    console.log(e);
+                });
+        }
         if (isDownvoted) {
             // remove downvote
-        } else if (isUpvoted) {
-            // change upvote to downvote
+            removeDownvote(entry.id)
+                .then(({ success, error }) => {
+                    if (success) {
+                        setIsDownvoted(false);
+                    }
+                    if (error) {
+                        console.log(error);
+                    }
+                })
+                .catch((e: unknown) => {
+                    console.log(e);
+                });
         } else {
             // do normal downvote
+            submitDownvote(entry.id)
+                .then(({ success, error }) => {
+                    if (success) {
+                        setIsDownvoted(true);
+                    }
+                    if (error) {
+                        console.log(error);
+                    }
+                })
+                .catch((e: unknown) => {
+                    console.log(e);
+                });
         }
     };
 
@@ -67,9 +148,11 @@ export const Entry = ({ entry }: EntryProps) => {
                 <div className="flex">
                     <LucideArrowBigUp
                         className={`hover:text-ctp-green cursor-pointer ${isUpvoted ? "text-ctp-green" : ""}`}
+                        onClick={handleUpvote}
                     />
                     <LucideArrowBigDown
                         className={`hover:text-ctp-red cursor-pointer ${isDownvoted ? "text-ctp-red" : ""}`}
+                        onClick={handleDownvote}
                     />
                 </div>
             </div>
