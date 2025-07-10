@@ -12,6 +12,7 @@
     "@libsql/client": "^0.15.9",
     "@tanstack/react-query": "^5.81.5",
     "@tanstack/react-query-devtools": "^5.81.5",
+    "@uidotdev/usehooks": "^2.4.1",
     "drizzle-orm": "^0.43.1",
     "drizzle-zod": "^0.8.2",
     "motion": "^12.23.0",
