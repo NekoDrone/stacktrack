@@ -8,12 +8,13 @@ export const projectsTable = sqliteTable(
     "projects",
     {
         id: integer("id").primaryKey({ autoIncrement: true }),
+        slug: text("slug").notNull(),
         name: text("name").notNull(),
         description: text("description"),
         status: text("status").notNull().default(ProjectStatus.INACTIVE),
         votes: integer("votes").notNull(),
         isPriority: integer("is_priority", { mode: "boolean" }).notNull(),
-        updatedAt: integer("created_at", { mode: "timestamp" })
+        updatedAt: integer("updated_at", { mode: "timestamp" })
             .notNull()
             .default(sql`(unixepoch('now'))`),
         createdAt: integer("created_at", { mode: "timestamp" })
@@ -29,7 +30,12 @@ export const projectsSelectSchema = z.object({
     ...createSelectSchema(projectsTable).shape,
     status: z.enum(ProjectStatus),
 });
+
+export const projectsSelectSchemaArray = z.array(projectsSelectSchema);
+
 export const projectsInsertSchema = z.object({
     ...createInsertSchema(projectsTable).shape,
     status: z.enum(ProjectStatus),
 });
+
+export type ProjectSelect = z.infer<typeof projectsSelectSchema>;
