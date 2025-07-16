@@ -2,7 +2,7 @@ import type { ProjectSelect } from "@/db/schema/projects";
 import { LucideStar } from "@/components/Icons/LucideStar";
 import { LucideArrowBigDown } from "@/components/Icons/LucideArrowBigDown";
 import { LucideArrowBigUp } from "@/components/Icons/LucideArrowBigUp";
-import { useLocalStorage, useSessionStorage } from "@uidotdev/usehooks";
+import { useLocalStorage } from "@uidotdev/usehooks";
 import {
     removeDownvote,
     removeUpvote,
@@ -10,6 +10,8 @@ import {
     submitUpvote,
 } from "@/utils/client/votes";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useContext } from "react";
+import { AdminContext } from "@/utils/providers/AdminProvider";
 
 interface EntryProps {
     entry: ProjectSelect;
@@ -17,6 +19,7 @@ interface EntryProps {
 
 export const Entry = ({ entry }: EntryProps) => {
     const queryClient = useQueryClient();
+    const isAdmin = useContext(AdminContext);
 
     const [isUpvoted, setIsUpvoted] = useLocalStorage<boolean>(
         `${entry.id.toString()}:isUpvoted`,
