@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { EntriesResponse } from "@/utils/types/responses";
 import { Entry } from "@/components/Entries/Entry";
 import { LoadingSpinner } from "@/components/Primitives/LoadingSpinner";
+import { Error } from "@/components/Error";
 
 export const EntriesList = () => {
     const { data, error, isPending } = useQuery({
@@ -18,7 +19,9 @@ export const EntriesList = () => {
 
     return (
         <div>
-            {!isPending && data ? (
+            {error ? (
+                <Error error={error} />
+            ) : !isPending ? (
                 data.entries.map((entry) => {
                     return <Entry entry={entry} key={entry.slug} />;
                 })
