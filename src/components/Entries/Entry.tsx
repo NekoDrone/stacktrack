@@ -2,20 +2,22 @@ import type { ProjectSelect } from "@/db/schema/projects";
 import { LucideStar } from "@/components/Icons/LucideStar";
 import { LucideArrowBigDown } from "@/components/Icons/LucideArrowBigDown";
 import { LucideArrowBigUp } from "@/components/Icons/LucideArrowBigUp";
-import { useLocalStorage } from "@uidotdev/usehooks";
+import { useLocalStorage, useSessionStorage } from "@uidotdev/usehooks";
 import {
     removeDownvote,
     removeUpvote,
     submitDownvote,
     submitUpvote,
 } from "@/utils/client/votes";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface EntryProps {
     entry: ProjectSelect;
 }
 
 export const Entry = ({ entry }: EntryProps) => {
+    const queryClient = useQueryClient();
+
     const [isUpvoted, setIsUpvoted] = useLocalStorage<boolean>(
         `${entry.id.toString()}:isUpvoted`,
         false,
@@ -26,103 +28,117 @@ export const Entry = ({ entry }: EntryProps) => {
         false,
     );
 
+    const removeDownvoteMutation = useMutation({
+        mutationFn: async () => {
+            setIsDownvoted(false);
+            try {
+                const { success, error } = await removeDownvote(entry.id);
+                if (!success) {
+                    setIsDownvoted(true);
+                }
+                if (error) {
+                    console.log(error);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["entries"] });
+        },
+    });
+
+    const removeUpvoteMutation = useMutation({
+        mutationFn: async () => {
+            setIsUpvoted(false);
+            try {
+                const { success, error } = await removeUpvote(entry.id);
+                if (!success) {
+                    setIsUpvoted(true);
+                }
+                if (error) {
+                    console.log(error);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["entries"] });
+        },
+    });
+
+    const submitUpvoteMutation = useMutation({
+        mutationFn: async () => {
+            setIsUpvoted(true);
+            try {
+                const { success, error } = await submitUpvote(entry.id);
+                if (!success) {
+                    setIsUpvoted(false);
+                }
+                if (error) {
+                    console.log(error);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["entries"] });
+        },
+    });
+
+    const submitDownvoteMutation = useMutation({
+        mutationFn: async () => {
+            setIsDownvoted(true);
+            try {
+                const { success, error } = await submitDownvote(entry.id);
+                if (!success) {
+                    setIsDownvoted(false);
+                }
+                if (error) {
+                    console.log(error);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["entries"] });
+        },
+    });
+
     const handleUpvote = () => {
         if (isDownvoted) {
             // change downvote to upvote
-            removeDownvote(entry.id)
-                .then(({ success, error }) => {
-                    if (success) {
-                        setIsDownvoted(false);
-                    }
-                    if (error) {
-                        console.log(error);
-                    }
-                })
-                .catch((e: unknown) => {
-                    console.log(e);
-                });
+            removeDownvoteMutation.mutate();
         }
         if (isUpvoted) {
             // remove upvote
-            removeUpvote(entry.id)
-                .then(({ success, error }) => {
-                    if (success) {
-                        setIsUpvoted(false);
-                    }
-                    if (error) {
-                        console.log(error);
-                    }
-                })
-                .catch((e: unknown) => {
-                    console.log(e);
-                });
+            removeUpvoteMutation.mutate();
         } else {
             // do normal upvote
-            submitUpvote(entry.id)
-                .then(({ success, error }) => {
-                    if (success) {
-                        setIsUpvoted(true);
-                    }
-                    if (error) {
-                        console.log(error);
-                    }
-                })
-                .catch((e: unknown) => {
-                    console.log(e);
-                });
+            submitUpvoteMutation.mutate();
         }
     };
 
     const handleDownvote = () => {
         if (isUpvoted) {
             // change upvote to downvote
-            removeUpvote(entry.id)
-                .then(({ success, error }) => {
-                    if (success) {
-                        setIsUpvoted(false);
-                    }
-                    if (error) {
-                        console.log(error);
-                    }
-                })
-                .catch((e: unknown) => {
-                    console.log(e);
-                });
+            removeUpvoteMutation.mutate();
         }
         if (isDownvoted) {
             // remove downvote
-            removeDownvote(entry.id)
-                .then(({ success, error }) => {
-                    if (success) {
-                        setIsDownvoted(false);
-                    }
-                    if (error) {
-                        console.log(error);
-                    }
-                })
-                .catch((e: unknown) => {
-                    console.log(e);
-                });
+            removeDownvoteMutation.mutate();
         } else {
             // do normal downvote
-            submitDownvote(entry.id)
-                .then(({ success, error }) => {
-                    if (success) {
-                        setIsDownvoted(true);
-                    }
-                    if (error) {
-                        console.log(error);
-                    }
-                })
-                .catch((e: unknown) => {
-                    console.log(e);
-                });
+            submitDownvoteMutation.mutate();
         }
     };
 
     if (isUpvoted && isDownvoted) {
         console.log(
-            "Somehow got into the state where user has upvoted and downvoted. Resetting vote count.",
+            "Somehow got into the state where user has upvoted and downvoted. This should never happen, but because it did, we are resetting the vote count.",
         );
         // actually un-upvote
         setIsUpvoted(false);
