@@ -17,3 +17,5 @@ export const entryPostOptsSchema = z.object({
     entry: z.object({ ...projectsInsertSchema.shape }),
     adminToken: z.string(),
 });
+
+export type EntryPostOpts = z.infer<typeof entryPostOptsSchema>;
