@@ -170,7 +170,7 @@ export const Entry = ({ entry }: EntryProps) => {
             className={`${outlines[entry.status]} flex w-76 flex-col gap-2 rounded-2xl p-4 outline-1`}
         >
             <div
-                className={`bg-ctp-surface-1 ${textColours[entry.status]} font-secondary w-fit rounded-md p-1 pr-1.5 pl-1.5 text-xs font-semibold tracking-wider`}
+                className={`bg-ctp-surface-1 ${textColours[entry.status]} font-secondary w-fit rounded-md p-1 pr-1.5 pl-1.5 text-xs font-semibold tracking-widest`}
             >
                 {entry.status.toUpperCase()}
             </div>
