@@ -210,17 +210,24 @@ export const Entry = ({ entry }: EntryProps) => {
             className={`${outlines[entry.status]} flex w-76 flex-col gap-2 rounded-2xl p-4 outline-1 transition-all`}
         >
             <div className="relative overflow-visible">
-                <div
-                    className={`${textColours[entry.status]} ${isAdmin ? "hover:bg-ctp-overlay-0 cursor-pointer transition" : ""} bg-ctp-surface-1 flex w-fit items-center justify-between gap-1 rounded-md p-1 pr-1.5 pl-1.5 ${showDropdown ? "rounded-b-none" : ""}`}
-                    onClick={handleDropdownClick}
-                >
-                    <p className="font-secondary pl-0.5 text-[0.66rem] font-semibold tracking-[0.12em]">
-                        {entry.status.toUpperCase()}
-                    </p>
-                    {isAdmin && (
-                        <LucideChevronDown
-                            className={`text-ctp-mauve ${showDropdown ? "rotate-180" : ""} transition`}
-                        />
+                <div className="relative flex items-end">
+                    <div
+                        className={`${textColours[entry.status]} ${isAdmin ? "peer hover:bg-ctp-overlay-0 cursor-pointer transition" : ""} bg-ctp-surface-1 flex h-fit w-fit items-center justify-between gap-1 rounded-md p-1 pr-1.5 pl-1.5 ${showDropdown ? "rounded-b-none" : ""}`}
+                        onClick={handleDropdownClick}
+                    >
+                        <p className="font-secondary pl-0.5 text-[0.66rem] font-semibold tracking-[0.12em]">
+                            {entry.status.toUpperCase()}
+                        </p>
+                        {isAdmin && (
+                            <LucideChevronDown
+                                className={`text-ctp-mauve ${showDropdown ? "rotate-180" : ""} transition`}
+                            />
+                        )}
+                    </div>
+                    {showDropdown && (
+                        <div className="peer-hover:bg-ctp-overlay-0 bg-ctp-surface-1 relative h-1 w-1 transition">
+                            <div className="bg-ctp-base absolute right-0 h-1 w-1 rounded-bl-full"></div>
+                        </div>
                     )}
                 </div>
 
