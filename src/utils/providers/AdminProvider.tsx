@@ -14,7 +14,9 @@ export const AdminProvider = ({
     adminToken: string;
 }) => {
     const { data, error, isPending } = useQuery({
-        queryKey: ["admin", adminToken],
+        // disable because we might need to specify empty key for non-admin access
+        // eslint-disable-next-line @tanstack/query/exhaustive-deps
+        queryKey: ["admin"],
         queryFn: async () => {
             const req = new Request(`/api/admin?token=${adminToken}`);
             return (
