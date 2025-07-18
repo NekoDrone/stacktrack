@@ -3,5 +3,4 @@ export enum ProjectStatus {
     INACTIVE = "inactive",
     ACTIVE = "active",
     SUSPENDED = "suspended",
-    DELETED = "deleted",
 }
