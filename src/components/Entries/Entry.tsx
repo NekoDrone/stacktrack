@@ -226,7 +226,9 @@ export const Entry = ({ entry }: EntryProps) => {
                     </div>
                     {showDropdown && (
                         <div className="peer-hover:bg-ctp-overlay-0 bg-ctp-surface-1 relative h-1 w-1 transition">
-                            <div className="bg-ctp-base absolute right-0 h-1 w-1 rounded-bl-full"></div>
+                            <div className="bg-ctp-base absolute right-0 h-1 w-1 rounded-bl-full">
+                                {/* entirely for the little curve thing lmao */}
+                            </div>
                         </div>
                     )}
                 </div>
