@@ -195,14 +195,14 @@ export const Entry = ({ entry }: EntryProps) => {
         [ProjectStatus.COMPLETE]: "outline-ctp-mauve",
         [ProjectStatus.INACTIVE]: "outline-ctp-subtext-0",
         [ProjectStatus.ACTIVE]: "outline-ctp-green",
-        [ProjectStatus.SUSPENDED]: "outline-ctp-yellow",
+        [ProjectStatus.SUSPENDED]: "outline-ctp-red",
     };
 
     const textColours: Record<ProjectStatus, string> = {
         [ProjectStatus.COMPLETE]: "text-ctp-mauve",
         [ProjectStatus.INACTIVE]: "text-ctp-subtext-0",
         [ProjectStatus.ACTIVE]: "text-ctp-green",
-        [ProjectStatus.SUSPENDED]: "text-ctp-yellow",
+        [ProjectStatus.SUSPENDED]: "text-ctp-red",
     };
 
     return (
@@ -211,14 +211,16 @@ export const Entry = ({ entry }: EntryProps) => {
         >
             <div className="relative overflow-visible">
                 <div
-                    className={`${textColours[entry.status]} ${isAdmin ? "hover:bg-ctp-overlay-0 cursor-pointer transition" : ""} flex w-fit items-center justify-between gap-1 rounded-md p-1 pr-1.5 pl-1.5 ${showDropdown ? "bg-ctp-overlay-0 rounded-b-none" : "bg-ctp-surface-1"}`}
+                    className={`${textColours[entry.status]} ${isAdmin ? "hover:bg-ctp-overlay-0 cursor-pointer transition" : ""} bg-ctp-surface-1 flex w-fit items-center justify-between gap-1 rounded-md p-1 pr-1.5 pl-1.5 ${showDropdown ? "rounded-b-none" : ""}`}
                     onClick={handleDropdownClick}
                 >
                     <p className="font-secondary pl-0.5 text-[0.66rem] font-semibold tracking-[0.12em]">
                         {entry.status.toUpperCase()}
                     </p>
                     {isAdmin && (
-                        <LucideChevronDown className="text-ctp-mauve" />
+                        <LucideChevronDown
+                            className={`text-ctp-mauve ${showDropdown ? "rotate-180" : ""} transition`}
+                        />
                     )}
                 </div>
 
@@ -282,6 +284,13 @@ const EntryStatusDropdown = ({
     currentStatus,
     handleStatusChange,
 }: DropdownProps) => {
+    const textColours: Record<ProjectStatus, string> = {
+        [ProjectStatus.COMPLETE]: "text-ctp-mauve",
+        [ProjectStatus.INACTIVE]: "text-ctp-subtext-0",
+        [ProjectStatus.ACTIVE]: "text-ctp-green",
+        [ProjectStatus.SUSPENDED]: "text-ctp-red",
+    };
+
     return (
         <motion.div
             className="text-ctp-text bg-ctp-surface-1 absolute inset-0 top-6 flex h-fit w-fit flex-col rounded-lg rounded-tl-none pt-2 pb-2"
@@ -294,12 +303,14 @@ const EntryStatusDropdown = ({
                 return (
                     <div
                         key={status}
-                        className="bg-ctp-surface-1 hover:bg-ctp-overlay-0 flex w-24 cursor-pointer items-center justify-between p-1.5 pr-2 pl-2 transition"
+                        className="bg-ctp-surface-1 hover:bg-ctp-overlay-0 flex w-28 cursor-pointer items-center justify-between p-1.5 pr-2 pl-2 transition"
                         onClick={() => {
                             handleStatusChange(status);
                         }}
                     >
-                        <p className="text-xs tracking-[0.12em]">
+                        <p
+                            className={`text-xs tracking-[0.12em] ${textColours[status]}`}
+                        >
                             {status
                                 .charAt(0)
                                 .toUpperCase()
