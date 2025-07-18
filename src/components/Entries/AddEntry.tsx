@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import type { Dispatch } from "react";
 import { useState } from "react";
+import { AddEntryForm } from "@/components/Entries/AddEntryForm";
 
 export const AddEntry = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,7 +17,7 @@ export const AddEntry = () => {
                     <p>entry tonite 👀</p>
                 </div>
                 <motion.button
-                    className="text-ctp-base from-ctp-lavender to-ctp-mauve cursor-pointer rounded-lg bg-gradient-to-r p-2"
+                    className="text-ctp-crust from-ctp-lavender to-ctp-mauve cursor-pointer rounded-lg bg-gradient-to-r p-2"
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
                     transition={{
@@ -60,13 +61,13 @@ export const AddEntryModal = ({
                 transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
             />
             <motion.div
-                className="bg-ctp-base outline-ctp-text z-10 rounded-2xl p-2 outline-1"
+                className="z-10"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
             >
-                hola
+                <AddEntryForm />
             </motion.div>
         </div>
     );
