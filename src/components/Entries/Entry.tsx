@@ -10,9 +10,14 @@ import {
     submitUpvote,
 } from "@/utils/client/votes";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AdminContext } from "@/utils/providers/AdminProvider";
 import { ProjectStatus } from "@/utils/types/client";
+import { submitEntry } from "@/utils/client/submitEntry";
+import { LucideChevronDown } from "@/components/Icons/LucideChevronDown";
+import { LucideCheck } from "@/components/Icons/LucideCheck";
+import { AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 
 interface EntryProps {
     entry: ProjectSelect;
@@ -20,7 +25,7 @@ interface EntryProps {
 
 export const Entry = ({ entry }: EntryProps) => {
     const queryClient = useQueryClient();
-    const isAdmin = useContext(AdminContext);
+    const { isAdmin, adminToken } = useContext(AdminContext);
 
     const [isUpvoted, setIsUpvoted] = useLocalStorage<boolean>(
         `${entry.id.toString()}:isUpvoted`,
@@ -31,6 +36,7 @@ export const Entry = ({ entry }: EntryProps) => {
         `${entry.id.toString()}:isDownvoted`,
         false,
     );
+    const [showDropdown, setShowDropdown] = useState(false);
 
     const removeDownvoteMutation = useMutation({
         mutationFn: async () => {
@@ -144,12 +150,46 @@ export const Entry = ({ entry }: EntryProps) => {
         console.log(
             "Somehow got into the state where user has upvoted and downvoted. This should never happen, but because it did, we are resetting the vote count.",
         );
-        // actually un-upvote
+        removeUpvoteMutation.mutate();
         setIsUpvoted(false);
 
-        // actually un-downvote
+        removeDownvoteMutation.mutate();
         setIsDownvoted(false);
     }
+
+    const submitEntryMutation = useMutation({
+        mutationFn: async (newEntry: ProjectSelect) => {
+            const submittedEntry: ProjectSelect = {
+                ...newEntry,
+                updatedAt: new Date(),
+            };
+            return await submitEntry({ entry: submittedEntry, adminToken });
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["entries"] });
+        },
+    });
+
+    const handlePriorityClick = () => {
+        const newEntry: ProjectSelect = {
+            ...entry,
+            isPriority: !entry.isPriority,
+        };
+        submitEntryMutation.mutate(newEntry);
+    };
+
+    const handleDropdownClick = () => {
+        setShowDropdown(!showDropdown);
+    };
+
+    const handleStatusChange = (newStatus: ProjectStatus) => {
+        const newEntry: ProjectSelect = {
+            ...entry,
+            status: newStatus,
+        };
+        submitEntryMutation.mutate(newEntry);
+        setShowDropdown(!showDropdown);
+    };
 
     const outlines: Record<ProjectStatus, string> = {
         [ProjectStatus.COMPLETE]: "outline-ctp-mauve",
@@ -167,20 +207,48 @@ export const Entry = ({ entry }: EntryProps) => {
 
     return (
         <div
-            className={`${outlines[entry.status]} flex w-76 flex-col gap-2 rounded-2xl p-4 outline-1`}
+            className={`${outlines[entry.status]} flex w-76 flex-col gap-2 rounded-2xl p-4 outline-1 transition-all`}
         >
-            <div
-                className={`bg-ctp-surface-1 ${textColours[entry.status]} font-secondary w-fit rounded-md p-1 pr-1.5 pl-1.5 text-xs font-semibold tracking-widest`}
-            >
-                {entry.status.toUpperCase()}
+            <div className="relative overflow-visible">
+                <div
+                    className={`${textColours[entry.status]} ${isAdmin ? "hover:bg-ctp-overlay-0 cursor-pointer transition" : ""} flex w-fit items-center justify-between gap-1 rounded-md p-1 pr-1.5 pl-1.5 ${showDropdown ? "bg-ctp-overlay-0 rounded-b-none" : "bg-ctp-surface-1"}`}
+                    onClick={handleDropdownClick}
+                >
+                    <p className="font-secondary pl-0.5 text-[0.66rem] font-semibold tracking-[0.12em]">
+                        {entry.status.toUpperCase()}
+                    </p>
+                    {isAdmin && (
+                        <LucideChevronDown className="text-ctp-mauve" />
+                    )}
+                </div>
+
+                <AnimatePresence>
+                    {showDropdown && (
+                        <EntryStatusDropdown
+                            currentStatus={entry.status}
+                            handleStatusChange={handleStatusChange}
+                        />
+                    )}
+                </AnimatePresence>
             </div>
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-medium">{entry.name}</h2>
-                <LucideStar
+                <div
                     className={
-                        entry.isPriority ? "text-ctp-yellow" : "text-ctp-text"
+                        isAdmin
+                            ? "bg-ctp-surface-1 hover:bg-ctp-overlay-0 cursor-pointer rounded-sm p-1 transition"
+                            : ""
                     }
-                />
+                    onClick={isAdmin ? handlePriorityClick : undefined}
+                >
+                    <LucideStar
+                        className={
+                            entry.isPriority
+                                ? "text-ctp-yellow"
+                                : "text-ctp-text"
+                        }
+                    />
+                </div>
             </div>
 
             <p className="text-sm">{entry.description}</p>
@@ -192,15 +260,55 @@ export const Entry = ({ entry }: EntryProps) => {
                 </p>
                 <div className="flex">
                     <LucideArrowBigUp
-                        className={`hover:text-ctp-green cursor-pointer ${isUpvoted ? "text-ctp-green" : ""}`}
+                        className={`hover:text-ctp-green cursor-pointer transition ${isUpvoted ? "text-ctp-green" : ""}`}
                         onClick={handleUpvote}
                     />
                     <LucideArrowBigDown
-                        className={`hover:text-ctp-red cursor-pointer ${isDownvoted ? "text-ctp-red" : ""}`}
+                        className={`hover:text-ctp-red cursor-pointer transition ${isDownvoted ? "text-ctp-red" : ""}`}
                         onClick={handleDownvote}
                     />
                 </div>
             </div>
         </div>
+    );
+};
+
+interface DropdownProps {
+    currentStatus: ProjectStatus;
+    handleStatusChange: (newStatus: ProjectStatus) => void;
+}
+
+const EntryStatusDropdown = ({
+    currentStatus,
+    handleStatusChange,
+}: DropdownProps) => {
+    return (
+        <motion.div
+            className="text-ctp-text bg-ctp-surface-1 absolute inset-0 top-6 flex h-fit w-fit flex-col rounded-lg rounded-tl-none pt-2 pb-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ type: "tween", duration: 0.15, ease: "easeInOut" }}
+        >
+            {Object.values(ProjectStatus).map((status) => {
+                return (
+                    <div
+                        key={status}
+                        className="bg-ctp-surface-1 hover:bg-ctp-overlay-0 flex w-24 cursor-pointer items-center justify-between p-1.5 pr-2 pl-2 transition"
+                        onClick={() => {
+                            handleStatusChange(status);
+                        }}
+                    >
+                        <p className="text-xs tracking-[0.12em]">
+                            {status
+                                .charAt(0)
+                                .toUpperCase()
+                                .concat(status.slice(1))}
+                        </p>
+                        {currentStatus == status && <LucideCheck />}
+                    </div>
+                );
+            })}
+        </motion.div>
     );
 };
