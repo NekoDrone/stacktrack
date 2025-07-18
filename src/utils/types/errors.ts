@@ -9,6 +9,7 @@ export enum GeneralErrorType {
     ENV_UNSET = "An environment variable was not properly set.",
     PARAMS_ERROR = "Query params were set incorrectly.",
     SERVER_ERROR = "Something went wrong on the server.",
+    FORBIDDEN = "Not allowed to access resource.",
 }
 
 export enum EntryErrorType {

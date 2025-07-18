@@ -39,3 +39,5 @@ export const projectsInsertSchema = z.object({
 });
 
 export type ProjectSelect = z.infer<typeof projectsSelectSchema>;
+
+export type ProjectInsert = z.infer<typeof projectsInsertSchema>;

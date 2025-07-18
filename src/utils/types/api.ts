@@ -1,4 +1,5 @@
 import { z } from "zod/v4";
+import { projectsInsertSchema } from "@/db/schema/projects";
 
 export enum VoteType {
     UP = "up",
@@ -11,3 +12,8 @@ export const votePostOptsSchema = z.object({
 });
 
 export type VotePostOpts = z.infer<typeof votePostOptsSchema>;
+
+export const entryPostOptsSchema = z.object({
+    entry: z.object({ ...projectsInsertSchema.shape }),
+    adminToken: z.string(),
+});

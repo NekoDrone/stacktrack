@@ -22,7 +22,11 @@ export enum StatusType {
     ERROR = "error",
 }
 
-export type ResponseData = EntryResponse | EntriesResponse | AdminResponse;
+export type ResponseData =
+    | EntryResponse
+    | EntriesResponse
+    | AdminResponse
+    | EntriesUpsertResponse;
 
 export interface EntryResponse {
     entry: ProjectSelect;
@@ -34,4 +38,8 @@ export interface EntriesResponse {
 
 export interface AdminResponse {
     isAdmin: boolean;
+}
+
+export interface EntriesUpsertResponse {
+    rowsAffected: number;
 }

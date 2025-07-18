@@ -8,6 +8,7 @@ import { eq } from "drizzle-orm";
 import { newErrorResponse, newSuccessResponse } from "@/utils/server/responses";
 import { StatusType } from "@/utils/types/responses";
 import { EntryErrorType, GeneralErrorType } from "@/utils/types/errors";
+import { entryPostOptsSchema } from "@/utils/types/api";
 
 export const GET = async (req: Request) => {
     const { searchParams } = new URL(req.url);
@@ -85,4 +86,68 @@ export const GET = async (req: Request) => {
     }
 
     return newSuccessResponse({ entries });
+};
+
+export const POST = async (req: Request) => {
+    const { success, data, error } = entryPostOptsSchema.safeParse(
+        await req.json(),
+    );
+    if (!success) {
+        return newErrorResponse(400, {
+            status: StatusType.ERROR,
+            error: {
+                message:
+                    "Error validating request body with Zod. Check the submitted request.",
+                type: GeneralErrorType.TYPE_ERROR,
+                details: error,
+            },
+        });
+    }
+
+    const adminKey = process.env.ADMIN_KEY;
+
+    if (!adminKey) {
+        return newErrorResponse(500, {
+            status: StatusType.ERROR,
+            error: {
+                type: GeneralErrorType.ENV_UNSET,
+                message: "Did not set ADMIN_KEY environment variable.",
+            },
+        });
+    }
+
+    const { entry, adminToken } = data;
+
+    if (adminToken != adminKey) {
+        return newErrorResponse(403, {
+            status: StatusType.ERROR,
+            error: {
+                type: GeneralErrorType.FORBIDDEN,
+                message: "Incorrect admin token provided.",
+            },
+        });
+    }
+
+    const upsert = await db
+        .insert(projectsTable)
+        .values(entry)
+        .onConflictDoUpdate({
+            target: projectsTable.id,
+            set: entry,
+        });
+
+    if (upsert.rowsAffected == 0) {
+        return newErrorResponse(500, {
+            status: StatusType.ERROR,
+            error: {
+                message:
+                    "Somehow upserted 0 rows. This should not happen unless Zod validation failed in some way and no error was produced.",
+                type: GeneralErrorType.SERVER_ERROR,
+            },
+        });
+    }
+
+    return newSuccessResponse({
+        rowsAffected: upsert.rowsAffected,
+    });
 };
