@@ -24,7 +24,7 @@ const RootLayout: FC<LayoutProps> = ({ children }) => {
             <head>
                 <meta charSet="UTF-8" />
                 <meta name="viewport" content="width=device-width" />
-                <title>Serenity&#39;s Projects</title>
+                <title>Serenity / Projects</title>
             </head>
             <body
                 className={`${lexend.className} bg-ctp-base text-ctp-text font-light antialiased`}
