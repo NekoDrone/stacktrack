@@ -5,7 +5,7 @@ import { AdminContext } from "@/utils/providers/AdminProvider";
 import { AddEntry } from "@/components/Entries/AddEntry";
 
 const IndexPage = () => {
-    const isAdmin = useContext(AdminContext);
+    const { isAdmin } = useContext(AdminContext);
 
     const eitherAdminGreeting = !!Math.floor(Math.random() * 2);
 

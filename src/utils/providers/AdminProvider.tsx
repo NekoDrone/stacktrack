@@ -4,7 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 import type { AdminResponse } from "@/utils/types/responses";
 import { Error } from "@/components/Error";
 
-export const AdminContext = createContext(false);
+export const AdminContext = createContext({
+    isAdmin: false,
+    adminToken: "",
+});
 
 export const AdminProvider = ({
     children,
@@ -30,7 +33,14 @@ export const AdminProvider = ({
     return error ? (
         <Error error={error} />
     ) : !isPending ? (
-        <AdminContext value={data.isAdmin}>{children}</AdminContext>
+        <AdminContext
+            value={{
+                isAdmin: data.isAdmin,
+                adminToken,
+            }}
+        >
+            {children}
+        </AdminContext>
     ) : (
         <>{children}</>
     );
