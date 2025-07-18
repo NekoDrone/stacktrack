@@ -35,6 +35,8 @@ export const projectsSelectSchemaArray = z.array(projectsSelectSchema);
 
 export const projectsInsertSchema = z.object({
     ...createInsertSchema(projectsTable).shape,
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
     status: z.enum(ProjectStatus),
 });
 
