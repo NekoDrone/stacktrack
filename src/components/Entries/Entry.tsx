@@ -12,6 +12,7 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useContext } from "react";
 import { AdminContext } from "@/utils/providers/AdminProvider";
+import { ProjectStatus } from "@/utils/types/client";
 
 interface EntryProps {
     entry: ProjectSelect;
@@ -150,10 +151,31 @@ export const Entry = ({ entry }: EntryProps) => {
         setIsDownvoted(false);
     }
 
+    const outlines: Record<ProjectStatus, string> = {
+        [ProjectStatus.COMPLETE]: "outline-ctp-mauve",
+        [ProjectStatus.INACTIVE]: "outline-ctp-subtext-0",
+        [ProjectStatus.ACTIVE]: "outline-ctp-green",
+        [ProjectStatus.SUSPENDED]: "outline-ctp-yellow",
+    };
+
+    const textColours: Record<ProjectStatus, string> = {
+        [ProjectStatus.COMPLETE]: "text-ctp-mauve",
+        [ProjectStatus.INACTIVE]: "text-ctp-subtext-0",
+        [ProjectStatus.ACTIVE]: "text-ctp-green",
+        [ProjectStatus.SUSPENDED]: "text-ctp-yellow",
+    };
+
     return (
-        <div className="outline-1 outline-ctp-overlay-2 p-4 rounded-2xl w-76 gap-2 flex flex-col">
-            <div className="flex justify-between items-center">
-                <h2 className="font-medium text-xl">{entry.name}</h2>
+        <div
+            className={`${outlines[entry.status]} flex w-76 flex-col gap-2 rounded-2xl p-4 outline-1`}
+        >
+            <div
+                className={`bg-ctp-surface-1 ${textColours[entry.status]} font-secondary w-fit rounded-md p-1 pr-1.5 pl-1.5 text-xs font-semibold tracking-wider`}
+            >
+                {entry.status.toUpperCase()}
+            </div>
+            <div className="flex items-center justify-between">
+                <h2 className="text-xl font-medium">{entry.name}</h2>
                 <LucideStar
                     className={
                         entry.isPriority ? "text-ctp-yellow" : "text-ctp-text"
@@ -162,8 +184,12 @@ export const Entry = ({ entry }: EntryProps) => {
             </div>
 
             <p className="text-sm">{entry.description}</p>
-            <div className="flex justify-between items-center">
-                <p className="text-xs font-extralight">{entry.votes} votes</p>
+            <div className="flex items-center justify-between">
+                <p
+                    className={`text-xs font-extralight ${isUpvoted ? "text-ctp-green" : isDownvoted ? "text-ctp-red" : "text-ctp-text"}`}
+                >
+                    {entry.votes} votes
+                </p>
                 <div className="flex">
                     <LucideArrowBigUp
                         className={`hover:text-ctp-green cursor-pointer ${isUpvoted ? "text-ctp-green" : ""}`}
