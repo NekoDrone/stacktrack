@@ -67,7 +67,7 @@ export const AddEntryModal = ({
                 exit={{ opacity: 0 }}
                 transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
             >
-                <AddEntryForm />
+                <AddEntryForm setIsModalOpen={setIsModalOpen} />
             </motion.div>
         </div>
     );
