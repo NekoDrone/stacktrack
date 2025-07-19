@@ -211,9 +211,15 @@ export const Entry = ({ entry }: EntryProps) => {
         >
             <div className="relative overflow-visible">
                 <div className="relative flex items-end">
+                    {showDropdown && (
+                        <div
+                            className="fixed inset-0"
+                            onClick={handleDropdownClick}
+                        />
+                    )}
                     <div
-                        className={`${textColours[entry.status]} ${isAdmin ? "peer hover:bg-ctp-overlay-0 cursor-pointer transition" : ""} bg-ctp-surface-1 flex h-fit w-fit items-center justify-between gap-1 rounded-md p-1 pr-1.5 pl-1.5 ${showDropdown ? "rounded-b-none" : ""}`}
-                        onClick={handleDropdownClick}
+                        className={`${textColours[entry.status]} ${isAdmin ? "peer hover:bg-ctp-overlay-0 bg-ctp-surface-1 cursor-pointer p-1 pr-1.5 pl-1.5 transition" : ""} flex h-fit w-fit items-center justify-between gap-1 rounded-md ${showDropdown ? "rounded-b-none" : ""}`}
+                        onClick={isAdmin ? handleDropdownClick : undefined}
                     >
                         <p className="font-secondary pl-0.5 text-[0.66rem] font-semibold tracking-[0.12em]">
                             {entry.status.toUpperCase()}
@@ -233,14 +239,16 @@ export const Entry = ({ entry }: EntryProps) => {
                     )}
                 </div>
 
-                <AnimatePresence>
-                    {showDropdown && (
-                        <EntryStatusDropdown
-                            currentStatus={entry.status}
-                            handleStatusChange={handleStatusChange}
-                        />
-                    )}
-                </AnimatePresence>
+                {isAdmin && (
+                    <AnimatePresence>
+                        {showDropdown && (
+                            <EntryStatusDropdown
+                                currentStatus={entry.status}
+                                handleStatusChange={handleStatusChange}
+                            />
+                        )}
+                    </AnimatePresence>
+                )}
             </div>
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-medium">{entry.name}</h2>
