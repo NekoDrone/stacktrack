@@ -281,7 +281,6 @@ export const Entry = ({ entry }: EntryProps) => {
                             <AnimatePresence>
                                 {showInfoModal && (
                                     <EntryInfoModal
-                                        setShowModal={setShowInfoModal}
                                         projectUrl={entry.projectUrl}
                                         repoUrl={entry.projectRepoUrl}
                                     />
