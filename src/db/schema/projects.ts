@@ -20,6 +20,8 @@ export const projectsTable = sqliteTable(
         createdAt: integer("created_at", { mode: "timestamp" })
             .notNull()
             .default(sql`(unixepoch('now'))`),
+        projectUrl: text(),
+        projectRepoUrl: text(),
     },
     (table) => {
         return [index("idx_example_id").on(table.id)];
