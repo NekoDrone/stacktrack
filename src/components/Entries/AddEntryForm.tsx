@@ -21,7 +21,9 @@ export const AddEntryForm = ({ setIsModalOpen }: EntryFormProps) => {
 
     const [projectName, setProjectName] = useState("");
     const [description, setDescription] = useState("");
-    const [selectedStatus, setSelectedStatus] = useState(ProjectStatus.ACTIVE);
+    const [selectedStatus, setSelectedStatus] = useState(
+        ProjectStatus.INACTIVE,
+    );
     const [formIsReady, setFormIsReady] = useState(false);
 
     const { adminToken } = useContext(AdminContext);
