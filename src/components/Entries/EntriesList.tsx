@@ -18,7 +18,7 @@ export const EntriesList = () => {
     });
 
     return (
-        <div>
+        <div className="flex flex-col gap-4">
             {error ? (
                 <Error error={error} />
             ) : !isPending ? (
