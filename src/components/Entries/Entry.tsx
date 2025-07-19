@@ -10,6 +10,7 @@ import {
     submitUpvote,
 } from "@/utils/client/votes";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { Dispatch } from "react";
 import { useContext, useState } from "react";
 import { AdminContext } from "@/utils/providers/AdminProvider";
 import { ProjectStatus } from "@/utils/types/client";
@@ -18,6 +19,8 @@ import { LucideChevronDown } from "@/components/Icons/LucideChevronDown";
 import { LucideCheck } from "@/components/Icons/LucideCheck";
 import { AnimatePresence } from "motion/react";
 import { motion } from "motion/react";
+import { EntryInfoModal } from "@/components/Entries/EntryInfoModal";
+import { LucideInfo } from "@/components/Icons/LucideInfo";
 
 interface EntryProps {
     entry: ProjectSelect;
@@ -37,6 +40,7 @@ export const Entry = ({ entry }: EntryProps) => {
         false,
     );
     const [showDropdown, setShowDropdown] = useState(false);
+    const [showInfoModal, setShowInfoModal] = useState(false);
 
     const removeDownvoteMutation = useMutation({
         mutationFn: async () => {
@@ -120,28 +124,22 @@ export const Entry = ({ entry }: EntryProps) => {
 
     const handleUpvote = () => {
         if (isDownvoted) {
-            // change downvote to upvote
             removeDownvoteMutation.mutate();
         }
         if (isUpvoted) {
-            // remove upvote
             removeUpvoteMutation.mutate();
         } else {
-            // do normal upvote
             submitUpvoteMutation.mutate();
         }
     };
 
     const handleDownvote = () => {
         if (isUpvoted) {
-            // change upvote to downvote
             removeUpvoteMutation.mutate();
         }
         if (isDownvoted) {
-            // remove downvote
             removeDownvoteMutation.mutate();
         } else {
-            // do normal downvote
             submitDownvoteMutation.mutate();
         }
     };
@@ -180,6 +178,10 @@ export const Entry = ({ entry }: EntryProps) => {
 
     const handleDropdownClick = () => {
         setShowDropdown(!showDropdown);
+    };
+
+    const handleInfoClick = () => {
+        setShowInfoModal(!showInfoModal);
     };
 
     const handleStatusChange = (newStatus: ProjectStatus) => {
@@ -251,7 +253,43 @@ export const Entry = ({ entry }: EntryProps) => {
                 )}
             </div>
             <div className="flex items-center justify-between">
-                <h2 className="text-xl font-medium">{entry.name}</h2>
+                <div className="flex items-center gap-2">
+                    <h2 className="text-xl font-medium">{entry.name}</h2>
+                    {(entry.projectUrl ?? entry.projectRepoUrl) && (
+                        <div className="relative flex">
+                            <button
+                                className={`peer bg-ctp-surface-1 hover:bg-ctp-overlay-0 h-fit cursor-pointer rounded-md p-1 transition ${showInfoModal ? "rounded-t-none" : ""}`}
+                                onClick={handleInfoClick}
+                            >
+                                <LucideInfo className="text-ctp-mauve" />
+                            </button>
+
+                            {showInfoModal && (
+                                <div
+                                    className="fixed inset-0"
+                                    onClick={handleInfoClick}
+                                />
+                            )}
+
+                            {showInfoModal && (
+                                <div className="peer-hover:bg-ctp-overlay-0 bg-ctp-surface-1 relative h-1 w-1 transition">
+                                    <div className="bg-ctp-base absolute right-0 h-1 w-1 rounded-tl-full">
+                                        {/* entirely for the little curve thing lmao */}
+                                    </div>
+                                </div>
+                            )}
+                            <AnimatePresence>
+                                {showInfoModal && (
+                                    <EntryInfoModal
+                                        setShowModal={setShowInfoModal}
+                                        projectUrl={entry.projectUrl}
+                                        repoUrl={entry.projectRepoUrl}
+                                    />
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    )}
+                </div>
                 <div
                     className={
                         isAdmin
@@ -310,7 +348,7 @@ const EntryStatusDropdown = ({
 
     return (
         <motion.div
-            className="text-ctp-text bg-ctp-surface-1 absolute inset-0 top-6 flex h-fit w-fit flex-col rounded-lg rounded-tl-none pt-2 pb-2"
+            className="text-ctp-text bg-ctp-surface-1 absolute inset-0 top-6 z-20 flex h-fit w-fit flex-col rounded-lg rounded-tl-none pt-2 pb-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
