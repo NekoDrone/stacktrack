@@ -26,7 +26,7 @@ export type ResponseData =
     | EntryResponse
     | EntriesResponse
     | AdminResponse
-    | EntriesUpsertResponse;
+    | EntriesChangeResponse;
 
 export interface EntryResponse {
     entry: ProjectSelect;
@@ -40,6 +40,6 @@ export interface AdminResponse {
     isAdmin: boolean;
 }
 
-export interface EntriesUpsertResponse {
+export interface EntriesChangeResponse {
     rowsAffected: number;
 }

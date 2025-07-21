@@ -1,6 +1,6 @@
 import type { EntryPostOpts } from "@/utils/types/api";
 import type {
-    EntriesUpsertResponse,
+    EntriesChangeResponse,
     ErrorResponse,
 } from "@/utils/types/responses";
 
@@ -11,6 +11,6 @@ export const submitEntry = async (data: EntryPostOpts) => {
     });
 
     return (await (await fetch(req)).json()) as
-        | EntriesUpsertResponse
+        | EntriesChangeResponse
         | ErrorResponse;
 };
