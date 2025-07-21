@@ -6,8 +6,6 @@ import type { ChangeEvent, Dispatch } from "react";
 import { useContext } from "react";
 import { useState } from "react";
 import type { ProjectInsert } from "@/db/schema/projects";
-import type { ErrorResponse } from "@/utils/types/responses";
-import { EntriesUpsertResponse } from "@/utils/types/responses";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { submitEntry } from "@/utils/client/submitEntry";
 import { AdminContext } from "@/utils/providers/AdminProvider";
