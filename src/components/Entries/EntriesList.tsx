@@ -24,7 +24,12 @@ export const EntriesList = () => {
                 <Error error={error} />
             ) : !isPending ? (
                 data.entries.sort(likeAStack).map((entry) => {
-                    return <Entry entry={entry} key={entry.slug} />;
+                    return (
+                        <Entry
+                            entry={entry}
+                            key={entry.slug + entry.id.toString()}
+                        />
+                    );
                 })
             ) : (
                 <LoadingSpinner />

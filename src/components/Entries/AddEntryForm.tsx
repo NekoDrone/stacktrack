@@ -27,6 +27,13 @@ export const AddEntryForm = ({
     const [description, setDescription] = useState<string>(
         defaultEntry?.description ?? "",
     );
+    const [projectUrl, setProjectUrl] = useState<string | null | undefined>(
+        defaultEntry?.projectUrl,
+    );
+    const [projectRepoUrl, setProjectRepoUrl] = useState<
+        string | null | undefined
+    >(defaultEntry?.projectRepoUrl);
+
     const [selectedStatus, setSelectedStatus] = useState(
         defaultEntry ? defaultEntry.status : ProjectStatus.INACTIVE,
     );
@@ -44,12 +51,23 @@ export const AddEntryForm = ({
         setDescription(e.target.value);
     };
 
+    const handleProjectUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setProjectUrl(e.target.value == "" ? null : e.target.value);
+    };
+
+    const handleProjectRepoUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setProjectRepoUrl(e.target.value == "" ? null : e.target.value);
+    };
+
     const performSubmission = async () => {
         const now = new Date();
         const newEntry: ProjectInsert = {
+            id: defaultEntry?.id,
             status: selectedStatus,
             slug: projectName.toLowerCase(),
             name: projectName,
+            projectUrl,
+            projectRepoUrl,
             votes: 0,
             isPriority: false,
             description,
@@ -99,6 +117,24 @@ export const AddEntryForm = ({
                     name="description"
                     onChange={handleDescriptionChange}
                     value={description}
+                />
+            </div>
+            <div className="flex items-center justify-end gap-2">
+                <p className="text-sm">URL:</p>
+                <input
+                    className="outline-ctp-text w-full rounded-md p-1 pr-2 pl-2 text-sm outline-1"
+                    name="project-name"
+                    onChange={handleProjectUrlChange}
+                    value={projectUrl ?? ""}
+                />
+            </div>
+            <div className="flex items-center justify-end gap-2">
+                <p className="text-sm whitespace-nowrap">Repo URL:</p>
+                <input
+                    className="outline-ctp-text w-full rounded-md p-1 pr-2 pl-2 text-sm outline-1"
+                    name="project-name"
+                    onChange={handleProjectRepoUrlChange}
+                    value={projectRepoUrl ?? ""}
                 />
             </div>
             <div className="flex items-center gap-2">
