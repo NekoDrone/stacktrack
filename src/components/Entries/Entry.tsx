@@ -10,7 +10,6 @@ import {
     submitUpvote,
 } from "@/utils/client/votes";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { Dispatch } from "react";
 import { useContext, useState } from "react";
 import { AdminContext } from "@/utils/providers/AdminProvider";
 import { ProjectStatus } from "@/utils/types/client";
@@ -21,6 +20,8 @@ import { AnimatePresence } from "motion/react";
 import { motion } from "motion/react";
 import { EntryInfoModal } from "@/components/Entries/EntryInfoModal";
 import { LucideInfo } from "@/components/Icons/LucideInfo";
+import { LucideSquarePen } from "@/components/Icons/LucideSquarePen";
+import { ModifyEntryModal } from "@/components/Entries/AddEntryModal";
 
 interface EntryProps {
     entry: ProjectSelect;
@@ -41,6 +42,7 @@ export const Entry = ({ entry }: EntryProps) => {
     );
     const [showDropdown, setShowDropdown] = useState(false);
     const [showInfoModal, setShowInfoModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
 
     const removeDownvoteMutation = useMutation({
         mutationFn: async () => {
@@ -184,6 +186,10 @@ export const Entry = ({ entry }: EntryProps) => {
         setShowInfoModal(!showInfoModal);
     };
 
+    const handleEditClick = () => {
+        setShowEditModal(!showEditModal);
+    };
+
     const handleStatusChange = (newStatus: ProjectStatus) => {
         const newEntry: ProjectSelect = {
             ...entry,
@@ -212,7 +218,7 @@ export const Entry = ({ entry }: EntryProps) => {
             className={`${outlines[entry.status]} flex w-76 flex-col gap-2 rounded-2xl p-4 outline-1 transition-all`}
         >
             <div className="relative overflow-visible">
-                <div className="relative flex items-end">
+                <div className="relative flex items-end justify-between">
                     {showDropdown && (
                         <div
                             className="fixed inset-0"
@@ -239,6 +245,20 @@ export const Entry = ({ entry }: EntryProps) => {
                             </div>
                         </div>
                     )}
+                    <button
+                        className="bg-ctp-surface-1 hover:bg-ctp-overlay-0 cursor-pointer rounded-md p-1 transition"
+                        onClick={handleEditClick}
+                    >
+                        <LucideSquarePen className="text-ctp-blue" />
+                    </button>
+                    <AnimatePresence initial={false}>
+                        {showEditModal && (
+                            <ModifyEntryModal
+                                setIsModalOpen={setShowEditModal}
+                                defaultEntry={entry}
+                            />
+                        )}
+                    </AnimatePresence>
                 </div>
 
                 {isAdmin && (
@@ -292,7 +312,7 @@ export const Entry = ({ entry }: EntryProps) => {
                 <div
                     className={
                         isAdmin
-                            ? "bg-ctp-surface-1 hover:bg-ctp-overlay-0 cursor-pointer rounded-sm p-1 transition"
+                            ? "bg-ctp-surface-1 hover:bg-ctp-overlay-0 cursor-pointer rounded-md p-1 transition"
                             : ""
                     }
                     onClick={isAdmin ? handlePriorityClick : undefined}
