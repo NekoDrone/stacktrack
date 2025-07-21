@@ -2,11 +2,11 @@
 
 import "./globals.css";
 import type { FC, ReactNode } from "react";
+import { Suspense } from "react";
 import { lexend } from "@/utils/styles/font";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { AdminProvider } from "@/utils/providers/AdminProvider";
-import { useSearchParams } from "next/navigation";
+import { Providers } from "@/utils/providers/Providers";
 
 export interface LayoutProps {
     children: ReactNode;
@@ -14,10 +14,6 @@ export interface LayoutProps {
 
 const RootLayout: FC<LayoutProps> = ({ children }) => {
     const reactQuery = new QueryClient();
-
-    const queryParams = useSearchParams();
-
-    const adminToken = queryParams.get("admin");
 
     return (
         <html lang="en">
@@ -30,9 +26,10 @@ const RootLayout: FC<LayoutProps> = ({ children }) => {
                 className={`${lexend.className} bg-ctp-base text-ctp-text font-light antialiased`}
             >
                 <QueryClientProvider client={reactQuery}>
-                    <AdminProvider adminToken={adminToken ?? ""}>
-                        {children}
-                    </AdminProvider>
+                    <Suspense>
+                        <Providers>{children}</Providers>
+                    </Suspense>
+
                     <ReactQueryDevtools initialIsOpen={false} />
                 </QueryClientProvider>
             </body>
