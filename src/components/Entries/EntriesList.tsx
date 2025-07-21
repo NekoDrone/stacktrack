@@ -3,6 +3,7 @@ import type { EntriesResponse } from "@/utils/types/responses";
 import { Entry } from "@/components/Entries/Entry";
 import { LoadingSpinner } from "@/components/Primitives/LoadingSpinner";
 import { Error } from "@/components/Error";
+import { likeAStack } from "@/utils/client/sorting";
 
 export const EntriesList = () => {
     const { data, error, isPending } = useQuery({
@@ -22,7 +23,7 @@ export const EntriesList = () => {
             {error ? (
                 <Error error={error} />
             ) : !isPending ? (
-                data.entries.map((entry) => {
+                data.entries.sort(likeAStack).map((entry) => {
                     return <Entry entry={entry} key={entry.slug} />;
                 })
             ) : (
