@@ -32,7 +32,7 @@ export const EntryInfoModal = ({ projectUrl, repoUrl }: InfoModalProps) => {
                         >
                             <p className="text-sm">Access it here!</p>
                         </AnimatedUnderlineLink>
-                        <LucideArrowRight className="peer-hover:text-ctp-mauve" />
+                        <LucideArrowRight className="peer-hover:text-ctp-mauve transition" />
                     </div>
                 )}
 
@@ -46,7 +46,7 @@ export const EntryInfoModal = ({ projectUrl, repoUrl }: InfoModalProps) => {
                         >
                             <p className="text-sm">Source</p>
                         </AnimatedUnderlineLink>
-                        <LucideArrowRight className="peer-hover:text-ctp-blue" />
+                        <LucideArrowRight className="peer-hover:text-ctp-blue transition" />
                     </div>
                 )}
             </div>
