@@ -245,12 +245,14 @@ export const Entry = ({ entry }: EntryProps) => {
                             </div>
                         </div>
                     )}
-                    <button
-                        className="bg-ctp-surface-1 hover:bg-ctp-overlay-0 cursor-pointer rounded-md p-1 transition"
-                        onClick={handleEditClick}
-                    >
-                        <LucideSquarePen className="text-ctp-blue" />
-                    </button>
+                    {isAdmin && (
+                        <button
+                            className="bg-ctp-surface-1 hover:bg-ctp-overlay-0 cursor-pointer rounded-md p-1 transition"
+                            onClick={handleEditClick}
+                        >
+                            <LucideSquarePen className="text-ctp-blue" />
+                        </button>
+                    )}
                     <AnimatePresence initial={false}>
                         {showEditModal && (
                             <ModifyEntryModal

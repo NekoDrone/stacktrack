@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "motion/react";
-import type { Dispatch } from "react";
 import { LucideLink } from "@/components/Icons/LucideLink";
 import { AnimatedUnderlineLink } from "@/components/AnimatedUnderlineLink";
 import { LucideGithub } from "@/components/Icons/LucideGithub";
