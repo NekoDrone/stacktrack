@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { ProjectStatus } from "@/utils/types/client";
-import type { ChangeEvent, Dispatch } from "react";
+import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { useContext } from "react";
 import { useState } from "react";
 import type { ProjectInsert } from "@/db/schema/projects";
@@ -11,18 +11,26 @@ import { submitEntry } from "@/utils/client/submitEntry";
 import { AdminContext } from "@/utils/providers/AdminProvider";
 
 interface EntryFormProps {
-    setIsModalOpen: Dispatch<boolean>;
+    setIsModalOpen: Dispatch<SetStateAction<boolean>>;
+    defaultEntry?: ProjectInsert;
 }
 
-export const AddEntryForm = ({ setIsModalOpen }: EntryFormProps) => {
+export const AddEntryForm = ({
+    setIsModalOpen,
+    defaultEntry,
+}: EntryFormProps) => {
     const queryClient = useQueryClient();
 
-    const [projectName, setProjectName] = useState("");
-    const [description, setDescription] = useState("");
-    const [selectedStatus, setSelectedStatus] = useState(
-        ProjectStatus.INACTIVE,
+    const [projectName, setProjectName] = useState<string>(
+        defaultEntry ? defaultEntry.name : "",
     );
-    const [formIsReady, setFormIsReady] = useState(false);
+    const [description, setDescription] = useState<string>(
+        defaultEntry?.description ?? "",
+    );
+    const [selectedStatus, setSelectedStatus] = useState(
+        defaultEntry ? defaultEntry.status : ProjectStatus.INACTIVE,
+    );
+    const [formIsReady, setFormIsReady] = useState(projectName.length > 0);
 
     const { adminToken } = useContext(AdminContext);
 
@@ -123,7 +131,7 @@ export const AddEntryForm = ({ setIsModalOpen }: EntryFormProps) => {
                                 bounce: 0.6,
                             }}
                         >
-                            Add Entry
+                            {defaultEntry ? "Edit" : "Add"} Entry
                         </motion.button>
                     </motion.div>
                 )}
