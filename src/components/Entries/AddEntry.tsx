@@ -1,9 +1,8 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import type { Dispatch } from "react";
 import { useState } from "react";
-import { AddEntryForm } from "@/components/Entries/AddEntryForm";
+import { AddEntryModal } from "@/components/Entries/AddEntryModal";
 
 export const AddEntry = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,38 +36,6 @@ export const AddEntry = () => {
                     <AddEntryModal setIsModalOpen={setIsModalOpen} />
                 )}
             </AnimatePresence>
-        </div>
-    );
-};
-
-export const AddEntryModal = ({
-    setIsModalOpen,
-}: {
-    setIsModalOpen: Dispatch<boolean>;
-}) => {
-    const handleBackdropClose = () => {
-        setIsModalOpen(false);
-    };
-
-    return (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-2">
-            <motion.div
-                className="bg-ctp-crust/30 fixed inset-0 backdrop-blur-sm"
-                onClick={handleBackdropClose}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
-            />
-            <motion.div
-                className="z-10"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
-            >
-                <AddEntryForm setIsModalOpen={setIsModalOpen} />
-            </motion.div>
         </div>
     );
 };
